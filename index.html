@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
+  </head>
+  <body>
+    <script type="module">
+      // Create the application helper and add its render target to the page
+      const app = new PIXI.Application();
+      await app.init({ width: 640, height: 360 })
+      document.body.appendChild(app.canvas);
+
+      // Create the sprite and add it to the stage
+      await PIXI.Assets.load('sample.png');
+      const sprite = PIXI.Sprite.from('sample.png');
+      sprite.x = 100
+      app.stage.addChild(sprite);
+
+      // Add a ticker callback to move the sprite back and forth
+      let elapsed = 0.0;
+      const keysDown = new Set()
+      app.ticker.add((ticker) => {
+        elapsed += ticker.deltaTime;
+        console.log(keysDown)
+        
+        const xl = ["ArrowLeft", "a"
+        ].some(key => keysDown.has(key)) ? sprite.x-- : undefined;
+        const xr = ["ArrowRight", "d"].some(key => keysDown.has(key)) && sprite.x++;
+        const yu = ["ArrowUp", "w"].some(key => keysDown.has(key)) && sprite.y--;
+        const yd = ["ArrowDown", "s"].some(key => keysDown.has(key)) && sprite.y++;
+
+      });
+      const keyboardInput = {
+        on(event, callback) {
+          window.addEventListener(event, callback)
+          return this
+        }
+      }
+      keyboardInput.on("keydown", (event) => {
+        keysDown.add(event.key)
+      }).on("keyup", (event) => {
+        keysDown.delete(event.key)
+      })
+    </script>
+  </body>
+</html>
